@@ -1,0 +1,45 @@
+{
+    "apiUrl" : "/rest/transactionView/getTransactionViewData",
+    "apiMethod" : "POST",
+    "apiFunction":"getTransactionData",
+    "apiResponsePrefixKey":"transactionViewDataList",
+    "apiToken":false,
+    "apiPermission": "",
+    "addProxy" : true,
+    "addServer" : true,
+    "serverIp" : "https://pay-stg.freecharge.in",
+    "serverName" : "kpTransaction",
+    "tableIndex":"transactionId",
+    "tableColumns":[
+        {
+            "type": "nameColumn",
+            "title":"KP MID",
+            "apiKey":"kpMid",
+            "columnSearch": true
+        },
+        {
+            "type": "nameColumn",
+            "title":"PG Used",
+            "apiKey":"pgUsed",
+            "columnSearch": false
+        },
+        {
+            "type": "nameColumn",
+            "title":"Product/Merchant Name",
+            "apiKey":"merchantName",
+            "columnSearch": false
+        },
+        {
+            "type": "nameColumn",
+            "title":"Issuer",
+            "apiKey":"issuer",
+            "columnSearch": false
+        },
+        {
+            "type": "nameColumn",
+            "title":"Payment Type",
+            "apiKey":"paymentType",
+            "columnSearch": false
+        }
+    ]
+}

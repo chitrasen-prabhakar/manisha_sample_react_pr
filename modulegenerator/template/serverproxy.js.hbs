@@ -1,0 +1,12 @@
+{{#if tableJson.addServer}}
+  upstream {{tableJson.serverName}} { server {{tableJson.serverIp}} }
+{{/if}}
+{{#if addFilter}}
+    {{#each filterJson.filter}}
+        {{#checkIf api '!=' undefined}}
+          {{#if api.addProxy}}
+            upstream {{api.serverName}} { server {{api.serverIp}} }
+          {{/if}}
+        {{/checkIf}}
+    {{/each}}
+{{/if}}

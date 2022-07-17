@@ -1,0 +1,80 @@
+{
+    "title": "Filter Transactions",
+    "filterName": "transactionFilter",
+    "filter" : [
+        {
+            "type":"INPUT",
+            "name":"lead_id",
+            "label":"Lead Id",
+            "value":""
+        },
+        {
+            "type":"DATEPICKER",
+            "name":"start_date",
+            "label":"Start Date",
+            "showTime":false
+        },
+        {
+            "type":"DATEPICKER",
+            "name":"end_date",
+            "label":"End Date",
+            "showTime":false
+        },
+        {
+            "type":"SELECT",
+            "name":"city",
+            "label":"City",
+            "required":false,
+            "options":[
+                {"text" : "BDK",
+                 "value" : "bdk"
+                }
+            ]
+        },
+        {
+            "type":"SELECT",
+            "name":"bank",
+            "label":"Bank",
+            "required":false,
+            "options":[
+                {"text" : "BDK",
+                 "value" : "bdk"
+                }
+            ]
+        },
+        {
+            "type":"SELECT",
+            "name":"lead_status",
+            "label":"Lead Status",
+            "required":false,
+            "options":[
+                {"text" : "BDK",
+                 "value" : "bdk"
+                }
+            ]
+        },
+        {
+            "type":"SELECT",
+            "name":"oem",
+            "label":"OEM",
+            "required":false,
+            "options":[
+                {"text" : "BDK",
+                 "value" : "bdk"
+                }
+            ]
+        }
+        ,
+        {
+            "type":"SELECT",
+            "name":"loan_status",
+            "label":"Loan Status",
+            "required":false,
+            "options":[
+                {"text" : "BDK",
+                 "value" : "bdk"
+                }
+            ]
+        }
+    ]
+}

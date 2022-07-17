@@ -1,0 +1,38 @@
+import { apiRequest } from "../../index";
+import { {{snakeCase tableJson.apiFunction}} 
+{{#if addFilter}}
+    {{#each filterJson.filter}}
+        {{#checkIf api '!=' undefined}}
+          , {{snakeCase api.function}}
+        {{/checkIf}}
+    {{/each}}
+{{/if}}
+} from "./urls"
+
+export const {{tableJson.apiFunction}} = (params) => {
+  return apiRequest(
+    {
+      url: {{snakeCase tableJson.apiFunction}},
+      type: "{{tableJson.apiMethod}}",
+      params,
+      token:{{tableJson.apiToken}},
+      permissions: ['{{tableJson.apiPermission}}']
+    }
+  );
+};
+
+{{#if addFilter}}
+    {{#each filterJson.filter}}
+        {{#checkIf api '!=' undefined}}
+export const {{api.function}} = (params) => {
+  return apiRequest(
+    {
+      url: {{snakeCase api.function}},
+      type: "{{api.method}}",
+      params,
+    }
+  );
+};
+        {{/checkIf}}
+    {{/each}}
+{{/if}}

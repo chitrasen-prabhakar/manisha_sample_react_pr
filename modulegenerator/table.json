@@ -1,0 +1,64 @@
+{
+    "apiUrl" : "/lead",
+    "apiMethod" : "POST",
+    "apiFunction":"getLeadData",
+    "apiResponsePrefixKey":"leadDataList",
+    "apiToken":false,
+    "apiPermission": "",
+    "addProxy" : true,
+    "addServer" : true,
+    "serverIp" : "",
+    "serverName" : "",
+    "tableIndex":"leadId",
+    "tableColumns":[
+        {
+            "type": "nameColumn",
+            "title":"Lead Id",
+            "apiKey":"leadId",
+            "columnSearch": true
+        },
+        {
+            "type": "nameColumn",
+            "title":"Customer Name",
+            "apiKey":"customer_name",
+            "columnSearch": false
+        },
+        {
+            "type": "nameColumn",
+            "title":"Gender",
+            "apiKey":"gender",
+            "columnSearch": false
+        },
+        {
+            "type": "nameColumn",
+            "title":"Lead Status",
+            "apiKey":"lead_status",
+            "columnSearch": false
+        },
+        {
+            "type": "nameColumn",
+            "title":"Bank Name",
+            "apiKey":"bank_name",
+            "columnSearch": false
+        }
+        ,
+        {
+            "type": "nameColumn",
+            "title":"Employment",
+            "apiKey":"employment_type",
+            "columnSearch": false
+        },
+        {
+            "type": "nameColumn",
+            "title":"Bike Details",
+            "apiKey":"bike_details",
+            "columnSearch": false
+        },
+        {
+            "type": "nameColumn",
+            "title":"View Details",
+            "apiKey":"bank_name",
+            "columnSearch": false
+        }
+    ]
+}

@@ -1,0 +1,216 @@
+import React, { useEffect, useState, useRef } from 'react'
+
+import { 
+    Form,
+    Button,
+    message,
+    Col,
+    Input,
+    Row,
+    DatePicker
+    } from "antd";
+import Table from "src/components/AjaxTable";
+import { nameColumn, actionColumn, timeColumn, withTag, getColumnSearchProps } from "src/components/AjaxTable/columns";
+import { 
+    {{tableJson.apiFunction}}
+    {{#if addFilter}}
+        {{#each filterJson.filter}}
+            {{#checkIf api '!=' undefined}}
+                , {{api.function}}
+            {{/checkIf}}
+        {{/each}}
+    {{/if}}
+} from "src/api/services/{{moduleSlug}}";
+
+ 
+import { displayMessages, successMessages } from "src/utils/messages";
+
+import FormSelect from "../form-input/form-select";
+import validateMessages from "src/utils/validationMessages";
+
+import { generalErrorHandler } from "src/utils/errors";
+
+
+function {{properCase ListingPageSlug}}Class() {
+    const [tableData, setTableData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const viewFormRef = useRef()
+    const fetchData = async (fieldsValue) => {
+        setLoading(true)
+        let response = await {{tableJson.apiFunction}}(fieldsValue);
+        if (response.statusCode >= 400) {
+            generalErrorHandler(response)
+            setLoading(false)
+            return;
+
+        }
+        response = response.data
+        {{#checkIf tableJson.apiResponsePrefixKey '!=' undefined}}
+            response = response.{{tableJson.apiResponsePrefixKey}};
+        {{/checkIf}}
+        setTableData(response);
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        (
+            async () => {
+                await fetchData();
+            }
+        )()
+    }, [])
+    const onFinish = async (fieldsValue) => {
+        const submitMsg = message.loading(displayMessages.request, 0);
+        const res = await fetchData(fieldsValue);
+        submitMsg();
+        
+    };
+
+    const onFinishFailed = (errorInfo) => {
+        message.error(displayMessages.failed);
+    };
+
+    const columns = [
+        {{#each tableJson.tableColumns}}   
+            {{type}}("{{title}}", "{{apiKey}}"{{#if columnSearch}}, { ...getColumnSearchProps("{{apiKey}}")}{{/if}}),
+        {{/each}}
+    ]
+    {{#if addFilter}}
+        {{#each filterJson.filter}}
+            {{#checkIf api '!=' undefined}}
+                const [{{properCase name}}Val, set{{properCase name}}] = useState([]);
+                const {{api.function}}Fun = async (value) => {
+                    var params = {}
+                    {{#each api.params}}
+                        {{#checkIf linkedTo '!=' undefined}}
+                            params.{{apiKey}} = value
+                        {{/checkIf}}
+                        {{#checkIf value '!=' undefined}}
+                            params.{{apiKey}} = "{{value}}"
+                        {{/checkIf}}
+                    {{/each}}
+                    let response = await {{api.function}}(params);
+                    if (response.statusCode >= 400) {
+                        generalErrorHandler(response)
+                        setLoading(false)
+                        return;
+                    }
+                    response = response.data
+                    {{#checkIf api.responsePrefixKey '!=' undefined}}
+                        response = response.{{api.responsePrefixKey}};
+                    {{/checkIf}}
+                    const data = []
+                    {{#checkIf api.mapping '!=' undefined}}
+                        response.forEach(el => {
+                            data.push({ text: el.{{api.mapping.text}}, value: el.{{api.mapping.value}} })
+                        })
+                        response = data
+                    {{/checkIf}}
+                    set{{properCase name}}(response);
+                };
+            {{/checkIf}}
+        {{/each}}
+    {{/if}}
+    return (
+        <>
+            {{#if addFilter}}
+                <Form
+                    name = "{{filterJson.filterName}}"
+                    label = "{{filterJson.title}}"
+                    onFinish={onFinish}
+                    layout="vertical"
+                    ref={viewFormRef}
+                    onFinishFailed={onFinishFailed}
+                    validateMessages={validateMessages}
+
+                >
+                    <Row gutter={16}>
+                        {{#each filterJson.filter}}
+                            <Col span={6}>
+                            {{#checkIf type '==' "SELECT"}}
+                                <FormSelect
+                                        name="{{name}}"
+                                        options={
+                                            {{#checkIf api '!=' undefined}}
+                                                {{properCase name}}Val
+                                            {{/checkIf}}
+                                            {{#checkIf options '!=' undefined}}
+                                                [{{#each options}}
+                                                    {"text":"{{text}}","value":"{{value}}"},
+                                                {{/each}}]
+                                            {{/checkIf}}
+                                            }
+                                        {{#if required}}
+                                            rules={[
+                                                {
+                                                    required: {{required}}
+                                                }
+                                            ]}
+                                        {{/if}}
+                                        
+                                        label="{{label}}"
+                                        placeholder="Select {{label}}"
+                                        {{#checkIf linked '!=' undefined}}
+                                            onSelect={(value) => {{linked.function}}Fun(value)}
+                                        {{/checkIf}}
+                                        
+
+                                />
+                            {{/checkIf}}
+                            {{#checkIf type '==' "INPUT"}}
+                                <Form.Item
+                                    label="{{label}}"
+                                    name="{{name}}"
+                                    {{#if required}}
+                                            rules={[
+                                                {
+                                                    required: {{required}}
+                                                }
+                                            ]}
+                                    {{/if}}
+                                    
+                                    >
+                                    <Input
+                                        placeholder="Enter {{label}}"
+                                    />
+                                </Form.Item>
+                            {{/checkIf}}
+                            {{#checkIf type '==' "DATEPICKER"}}
+                                <Form.Item
+                                    label="{{label}}"
+                                    name="{{name}}"
+                                >
+                                    <DatePicker 
+                                        {{#if showTime}}showTime {{/if}}
+                                    />
+                                </Form.Item>
+                            {{/checkIf}}
+                            </Col>
+                        {{/each}}
+                        <Form.Item
+                        >
+                            <Button
+                            htmlType="submit"
+                            type="primary"
+                            >
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </Row>
+                    
+                </Form>
+            {{/if}}
+            <Table
+                columns={columns}
+                data={tableData}
+                fetchData={fetchData}
+                loading={loading}
+                dataIndex='{{tableJson.tableIndex}}'
+            />
+        </>
+    )
+}
+
+
+
+export default {{properCase ListingPageSlug}}Class;

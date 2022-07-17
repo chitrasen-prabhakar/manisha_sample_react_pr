@@ -1,0 +1,12 @@
+import { HOST_OPS } from '../../index';
+
+{{#if tableJson.addServer}}
+  export const {{snakeCase tableJson.apiFunction}} = `${HOST_OPS}{{tableJson.apiUrl}}`
+{{/if}}
+{{#if addFilter}}
+    {{#each filterJson.filter}}
+        {{#checkIf api '!=' undefined}}
+          export const {{snakeCase api.function}} = `${HOST_OPS}{{api.url}}`
+        {{/checkIf}}
+    {{/each}}
+{{/if}}

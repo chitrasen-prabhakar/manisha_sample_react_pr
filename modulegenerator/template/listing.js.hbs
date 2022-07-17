@@ -1,0 +1,35 @@
+import {
+    Row,
+    Col,
+    Spin,
+    Card
+} from "antd";
+import {{properCase ListingPageSlug}}List from "../../src/components/forms/{{moduleSlug}}/{{properCase ListingPageSlug}}";
+
+const {{properCase ListingPageSlug}} = (props) => {
+
+    return (
+        <>
+
+            <Row justify="space-around" type="flex">
+                <Col xs={24} >
+                    <Spin
+                        spinning={false}
+                        tip="Fetching existing form data"
+                    >
+                        <Card
+                            bordered
+                            hoverable
+                            title="{{properCase moduleSlug}}"
+                        >
+
+                        <{{properCase ListingPageSlug}}List/>
+                        </Card>
+                    </Spin>
+                </Col>
+            </Row>
+        </>
+    );
+};
+
+export default {{properCase ListingPageSlug}};

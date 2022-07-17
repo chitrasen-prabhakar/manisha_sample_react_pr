@@ -1,0 +1,7 @@
+FROM openresty/openresty:alpine-fat
+RUN  luarocks install inspect
+COPY nginx/dev/nginx.conf /usr/local/openresty/nginx/conf
+COPY nginx/mime.types /etc/nginx
+# COPY out /home/www-data/panel
+# COPY nginx/404.html /home/www-data/404.html
+COPY nginx/lib /home/lualib

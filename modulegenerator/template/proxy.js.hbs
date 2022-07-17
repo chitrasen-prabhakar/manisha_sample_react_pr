@@ -1,0 +1,18 @@
+{{#if tableJson.addProxy}}
+  location /api{{tableJson.apiUrl}} {
+    access_by_lua_file "/home/lualib/access.lua";
+    proxy_pass http://{{tableJson.serverName}}{{tableJson.apiUrl}};
+  }
+{{/if}}
+{{#if addFilter}}
+    {{#each filterJson.filter}}
+        {{#checkIf api '!=' undefined}}
+          {{#if api.addProxy}}
+            location /api{{api.url}} {
+              access_by_lua_file "/home/lualib/access.lua";
+              proxy_pass http://{{api.serverName}}{{api.url}};
+            }
+          {{/if}}
+        {{/checkIf}}
+    {{/each}}
+{{/if}}

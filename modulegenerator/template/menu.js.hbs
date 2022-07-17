@@ -1,0 +1,31 @@
+{
+    menu: '{{menuName}}',
+    menuIsVisible: true,
+    icon: <StopOutlined/>,
+    path: '/{{moduleSlug}}',
+    permission: [],
+    {{#if addSubMenu}}
+    nestedMenu:[
+        {{#if addSubMenu}}
+            {{#if FormSubMenuName}}
+                {
+                    menu: '{{FormSubMenuName}}',
+                    menuIsVisible: true,
+                    icon: '',
+                    path: '{{moduleSlug}}/{{FormPageSlug}}',
+                    permission: [],
+                },
+            {{/if}}
+            {{#if ListingSubMenuName}}
+                {
+                    menu: '{{ListingSubMenuName}}',
+                    menuIsVisible: true,
+                    icon: '',
+                    path: '{{moduleSlug}}/{{ListingPageSlug}}',
+                    permission: [],
+                },
+            {{/if}}
+        {{/if}}
+    ]
+    {{/if}}
+},

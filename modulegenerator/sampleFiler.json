@@ -1,0 +1,113 @@
+{
+    "title": "Filter Transactions",
+    "filterName": "transactionFilter",
+    "filter" : [
+        {
+            "type":"INPUT",
+            "name":"kp_mid",
+            "label":"KP MID",
+            "value":""
+        },
+        {
+            "type":"SELECT",
+            "name":"pg_used",
+            "label":"KP MID",
+            "required":true,
+            "options":[
+                {"text" : "BDK",
+                 "value" : "bdk"
+                },
+                {"text" : "CCA Debit",
+                 "value" : "cca_dc"
+                },
+                {"text" : "Cyber",
+                 "value" : "cybs"
+                },
+                {"text" : "FC UPI",
+                 "value" : "fcupi"
+                },
+                {"text" : "HDFC",
+                 "value" : "hdfc"
+                },
+                {"text" : "MIGS",
+                 "value" : "migs"
+                },
+                {"text" : "PaySecure",
+                 "value" : "paysecure"
+                },
+                
+                {"text" : "PayU",
+                 "value" : "payu"
+                },
+                {"text" : "Siddham PG",
+                 "value" : "spg"
+                }
+            ]
+        },
+        {
+            "type":"SELECT",
+            "name":"payment_type",
+            "label":"KP MID",
+            "linked":{"fieldName":"transaction_id","function":"getTransactionDataFilter"},
+            "options": [
+                {
+                    "text": "Credit Card",
+                    "value" : "CC"
+                 },
+                 {
+                     "text": "Debit Card",
+                    "value" : "DC"
+                 },
+                 {
+                     "text": "Netbanking" ,
+                    "value" : "NB"
+                 },
+                 {
+                     "text": "UPI",
+                    "value" : "FCUPI"
+                 }
+             ]
+        },
+        {
+            "type":"SELECT",
+            "name":"transaction_id",
+            "label":"Transaction ID",
+            "api" : {
+                "url" : "/rest/transactionView/getTransactionViewData",
+                "method" : "POST",
+                "function":"getTransactionDataFilter",
+                "responsePrefixKey":"transactionViewDataList",
+                "addProxy" : true,
+                "addServer" : true,
+                "serverIp" : "https://pay-stg.freecharge.in",
+                "serverName" : "kpTransaction",
+                "mapping":{
+                    "text":"transactionId",
+                    "value":"transactionId"
+                },
+                "paramsa":[
+                    {
+                        "apiKey":"payment_type",
+                        "linkedTo":"payment_type"
+                    },
+                    {
+                        "apiKey":"payment_test",
+                        "value": "test"
+                    }
+                ]
+            }
+        },
+        {
+            "type":"DATEPICKER",
+            "name":"from_date",
+            "label":"Start Date Time",
+            "showTime":true
+        },
+        {
+            "type":"DATEPICKER",
+            "name":"to_date",
+            "label":"End Date Time",
+            "showTime":false
+        }
+    ]
+}
