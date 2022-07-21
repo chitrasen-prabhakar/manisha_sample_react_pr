@@ -17,8 +17,8 @@ export const authEmail =
 // export const HOST = "http://10.220.21.229:8080";
 // export const HOST_OPS = "http://10.252.5.76:8080";
 
-export const LMS_HOST = "http://localhost:4004/v1";
-export const LD_HOST = "https://stageld.driviocaptial.com/v1";
+export const LMS_HOST = process.env.NEXT_PUBLIC_LMS_HOST//"https://stagelmsapi.driviocaptial.com/v1";
+export const LD_HOST = process.env.NEXT_PUBLIC_LD_HOST//"https://stageld.driviocaptial.com/v1";
 
 //resuable function to create sagas
 export function* apiGenerator(...data) {

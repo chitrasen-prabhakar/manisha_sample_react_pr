@@ -3,7 +3,6 @@ import LeadForm from "../src/components/forms/lead/LeadForm";
 
 import { Row,Col } from 'antd';
 const Index = (props) => {
-  
   return (
     <div className='containerLogin'>
     <Row justify="space-around">
