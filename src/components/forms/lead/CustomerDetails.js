@@ -26,8 +26,11 @@ import {
   fetchCityList,
   saveLeadData,
 } from "src/api/services/lead";
-
+import { useRouter } from "next/router";
 const CustomerDetails = (props) => {
+  const router = useRouter();
+
+  const { utm_source, utm_medium, utm_campaign } = router.query;
   const [form] = Form.useForm();
   const [cityList, setCityList] = useState(
     props.customerInitialData.cityList ? props.customerInitialData.cityList : []
@@ -78,6 +81,16 @@ const CustomerDetails = (props) => {
     if (props.leadId) {
       fieldsValue.lead_id = props.leadId;
     }
+    if (typeof utm_source != "undefined" && utm_source) {
+      fieldsValue.utm_source = utm_source;
+    }
+    if (typeof utm_medium != "undefined" && utm_medium) {
+      fieldsValue.utm_medium = utm_medium;
+    }
+    if (typeof utm_campaign != "undefined" && utm_campaign) {
+      fieldsValue.utm_campaign = utm_campaign;
+    }
+
     props.setCustomerInitialData(fieldsValue);
     let response = await saveLeadData(fieldsValue);
     response = response.data;
