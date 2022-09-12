@@ -10,8 +10,6 @@ import {
   Card,
   Typography,
 } from "antd";
-import FormSelect from "../form-input/form-select";
-
 import { Regex } from "src/utils/Regex";
 
 import { displayMessages, successMessages } from "src/utils/messages";
@@ -21,13 +19,34 @@ import validateMessages from "src/utils/validationMessages";
 const { Text, Link } = Typography;
 import { saveLeadData } from "src/api/services/lead";
 import { useRouter } from "next/router";
+import FormItem from "antd/lib/form/FormItem";
+
+import { PlusOutlined } from "@ant-design/icons";
+import { Modal, Upload } from "antd";
+
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = () => resolve(reader.result);
+
+    reader.onerror = (error) => reject(error);
+  });
+
 const EmploymentDetails = (props) => {
   const [loading, setLoading] = useState(false);
-  const viewFormRef = useRef();
+  const [form] = Form.useForm();
   const router = useRouter();
-
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [docImage, setDocImage] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [uploadImageMsg, setUploadImageMsg] = useState("");
+  const [fileList, setFileList] = useState([]);
   const onFinish = async (fieldsValue) => {
     setLoading(true);
+
     fieldsValue.lead_step = "EMPLOYMENTDETAIL";
     if (props.leadId) {
       fieldsValue.lead_id = props.leadId;
@@ -58,6 +77,40 @@ const EmploymentDetails = (props) => {
       }
     })();
   }, [props.leadId]);
+  const handleCancel = () => setPreviewVisible(false);
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+
+    setPreviewImage(file.url || file.preview);
+    setPreviewVisible(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
+  };
+
+  const handleChange = ({ fileList: newFileList }) => {
+    if (newFileList.length > 0) {
+      if (typeof newFileList[0].response != "undefined")
+        form.setFieldsValue({ pan_image: newFileList[0].response });
+    }
+    setFileList(newFileList);
+  };
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload PAN
+      </div>
+    </div>
+  );
   return (
     <Card bordered hoverable>
       <div className="cardHeader">
@@ -72,7 +125,7 @@ const EmploymentDetails = (props) => {
         label="Employment Details"
         onFinish={onFinish}
         layout="horizontal"
-        ref={viewFormRef}
+        form={form}
         onFinishFailed={onFinishFailed}
         validateMessages={validateMessages}
         initialValues={props.employmentInitialData}
@@ -113,6 +166,34 @@ const EmploymentDetails = (props) => {
         >
           <Input placeholder="PAN Number" maxLength={10} />
         </Form.Item>
+        <FormItem
+          name="pan_image"
+          rules={[{ required: true, message: "Please Upload Pan" }]}
+        >
+          <Upload
+            action={process.env.NEXT_PUBLIC_LMS_HOST + "/lead/docupload"}
+            listType="picture-card"
+            fileList={fileList}
+            onPreview={handlePreview}
+            onChange={handleChange}
+          >
+            {fileList.length >= 1 ? null : uploadButton}
+          </Upload>
+          <Modal
+            visible={previewVisible}
+            title={previewTitle}
+            footer={null}
+            onCancel={handleCancel}
+          >
+            <img
+              alt="example"
+              style={{
+                width: "100%",
+              }}
+              src={previewImage}
+            />
+          </Modal>
+        </FormItem>
         <Text style={{ color: "blue" }}>
           Your details are secure and will be used only for the loan application
           process

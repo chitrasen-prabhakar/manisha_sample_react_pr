@@ -12,7 +12,10 @@ import {
   Typography,
   Radio,
 } from "antd";
+import FormItem from "antd/lib/form/FormItem";
 
+import { PlusOutlined } from "@ant-design/icons";
+import { Modal, Upload } from "antd";
 import { useRouter } from "next/router";
 import validateMessages from "src/utils/validationMessages";
 import { displayMessages, successMessages } from "src/utils/messages";
@@ -23,14 +26,19 @@ const { Text } = Typography;
 import { saveLeadData } from "src/api/services/lead";
 import TextArea from "antd/lib/input/TextArea";
 const docText = {
-  AadharCard: "Enter Aadhar Number",
-  VoterID: "Enter Voted Id Number",
-  DrivingLicense: "Enter Driving License Number",
-  Passport: "Enter Passport Number",
+  AadharCard: "Aadhar",
+  VoterID: "Voted Id",
+  DrivingLicense: "Driving License",
+  Passport: "Passport",
 };
 const ResidentialDetails = (props) => {
-  const viewFormRef = useRef();
+  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [docImage, setDocImage] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fileList, setFileList] = useState([]);
   const [doc_type, setDocType] = useState(
     props.residentialInitialData.doc_type
       ? props.residentialInitialData.doc_type
@@ -76,6 +84,40 @@ const ResidentialDetails = (props) => {
       }
     })();
   }, [props.leadId]);
+  const handleCancel = () => setPreviewVisible(false);
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+
+    setPreviewImage(file.url || file.preview);
+    setPreviewVisible(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
+  };
+
+  const handleChange = ({ fileList: newFileList }) => {
+    if (newFileList.length > 0) {
+      if (typeof newFileList[0].response != "undefined")
+        form.setFieldsValue({ doc_image: newFileList[0].response });
+    }
+    setFileList(newFileList);
+  };
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload {docText[doc_type]}
+      </div>
+    </div>
+  );
   return (
     <Card bordered hoverable>
       <div className="cardHeader">
@@ -89,7 +131,7 @@ const ResidentialDetails = (props) => {
         label="Customer Details"
         onFinish={onFinish}
         layout="horizontal"
-        ref={viewFormRef}
+        form={form}
         onFinishFailed={onFinishFailed}
         validateMessages={validateMessages}
         initialValues={props.residentialInitialData}
@@ -122,8 +164,36 @@ const ResidentialDetails = (props) => {
         </Form.Item>
 
         <Form.Item name="doc_number">
-          <Input placeholder={docText[doc_type]} />
+          <Input placeholder={`Enter ${docText[doc_type]}`} />
         </Form.Item>
+        <FormItem
+          name="doc_image"
+          rules={[{ required: true, message: "Please Upload Pan" }]}
+        >
+          <Upload
+            action={process.env.NEXT_PUBLIC_LMS_HOST + "/lead/docupload"}
+            listType="picture-card"
+            fileList={fileList}
+            onPreview={handlePreview}
+            onChange={handleChange}
+          >
+            {fileList.length >= 1 ? null : uploadButton}
+          </Upload>
+          <Modal
+            visible={previewVisible}
+            title={previewTitle}
+            footer={null}
+            onCancel={handleCancel}
+          >
+            <img
+              alt="example"
+              style={{
+                width: "100%",
+              }}
+              src={previewImage}
+            />
+          </Modal>
+        </FormItem>
         <Form.Item name="address">
           <TextArea placeholder="Address" />
         </Form.Item>
@@ -138,6 +208,7 @@ const ResidentialDetails = (props) => {
         >
           <Input placeholder="Years in Current Residence" />
         </Form.Item>
+
         <div className="steps-action">
           <Button style={{ margin: "0 8px" }} onClick={() => props.prev()}>
             Previous
