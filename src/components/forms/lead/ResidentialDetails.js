@@ -168,7 +168,7 @@ const ResidentialDetails = (props) => {
         </Form.Item>
         <FormItem
           name="doc_image"
-          rules={[{ required: true, message: "Please Upload Pan" }]}
+          // rules={[{ required: true, message: "Please Upload Pan" }]}
         >
           <Upload
             action={process.env.NEXT_PUBLIC_LMS_HOST + "/lead/docupload"}
